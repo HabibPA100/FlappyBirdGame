@@ -44,15 +44,17 @@ class PlayState extends FlxState {
         ground1 = new FlxSprite(0, FlxG.height - 50, "assets/images/ground.png");
         ground1.scale.set(0.5, 0.5);
         ground1.updateHitbox();
-        ground1.velocity.x = -100;
+		// ground1.acceleration.x = -600;
+		ground1.velocity.x = -200;
         
-        ground2 = new FlxSprite(ground1.width, FlxG.height - 50, "assets/images/ground.png");
+		ground2 = new FlxSprite(ground1.width - 5, FlxG.height - 50, "assets/images/ground.png");
         ground2.scale.set(0.5, 0.5);
         ground2.updateHitbox();
-        ground2.velocity.x = -100;
+		// ground2.acceleration.x = -600;
+		ground2.velocity.x = -200;
         
-        add(ground1);
-        add(ground2);
+		add(ground2);
+		add(ground1);
         
 
         // Create the bird
@@ -70,34 +72,36 @@ class PlayState extends FlxState {
         add(scoreText);
     }
 
-    // Function to generate pipes at random positions
     function generatePipes():Void {
-        if (gameOver) return;
-        var gapY:Float = FlxG.random.float(100, FlxG.height - 200); // Random Y position for pipe gap
-        var gapSize:Float = 150; // Size of the gap between the pipes
+		if (gameOver)
+			return;
 
-        // Create the top pipe
-        var pipeTop:FlxSprite = new FlxSprite(FlxG.width, gapY - 200, "assets/images/pipe.png");
-        pipeTop.scale.set(0.1, 0.1); // Scaling the pipe for better visibility
+		var gapSize:Float = 150;
+		var gapY:Float = FlxG.random.float(150, FlxG.height - gapSize - 100); // গ্যাপের শুরুর অবস্থান
+
+		// Top pipe - stays at y = 0
+		var pipeTop:FlxSprite = new FlxSprite(FlxG.width, 0, "assets/images/topPipe.png");
+		pipeTop.scale.set(0.1, 0.1);
         pipeTop.updateHitbox();
 
-        // Create the bottom pipe
-        var pipeBottom:FlxSprite = new FlxSprite(FlxG.width, gapY + gapSize, "assets/images/pipe.png");
-        pipeBottom.scale.set(0.1, 0.1); // Scaling the pipe for better visibility
+		// Bottom pipe - stays at bottom, we position its Y so that top aligns with gapY + gapSize
+		var pipeBottom:FlxSprite = new FlxSprite(FlxG.width, FlxG.height, "assets/images/pipe.png");
+		pipeBottom.scale.set(0.1, 0.1);
         pipeBottom.updateHitbox();
+		pipeBottom.y = gapY + gapSize; // নিচের পাইপটা গ্যাপের নিচ থেকে শুরু হবে
 
-        // Add movement if the game has started
+		// Movement
         if (gameStarted) {
-            pipeTop.velocity.x = -100; // Move pipes to the left
-            pipeBottom.velocity.x = -100; // Move pipes to the left
+			pipeTop.velocity.x = -100;
+			pipeBottom.velocity.x = -100;
         }
 
-        // Add pipes to the array and to the game
         pipes.push(pipeTop);
         pipes.push(pipeBottom);
         add(pipeTop);
         add(pipeBottom);
     }
+
 
     override public function update(elapsed:Float):Void {
             // Loop ground1
@@ -111,7 +115,8 @@ class PlayState extends FlxState {
         }
         if (!gameOver) {
             // Detect if the space bar is pressed
-            if (FlxG.keys.justPressed.SPACE) {
+			if (FlxG.keys.justPressed.SPACE || FlxG.mouse.justPressed)
+			{
                 if (!gameStarted) {
                     gameStarted = true;
                     bird.acceleration.y = gravity; // Start gravity effect when space is pressed
@@ -153,14 +158,21 @@ class PlayState extends FlxState {
     }    
 
     function updateScore():Void {
-        for (pipe in pipes) {
-            if (pipe.x < bird.x && pipe.exists) {
+		// We loop every 2 pipes, because each gap has 2 pipes
+		for (i in 0...pipes.length)
+		{
+			var pipe = pipes[i];
+
+			// Only consider top pipes (assuming they're added before bottom pipe)
+			if (i % 2 == 0 && pipe.x + pipe.width < bird.x && pipe.exists)
+			{
                 score++;
-                scoreText.text = "Score: " + score;
-                pipe.kill(); // This also sets exists to false
-            }            
+				scoreText.text = "Score: " + score;
+				pipe.kill();
+			}
         }
     }
+
     // End the game if a collision occurs
     function endGame():Void {
         gameOver = true;
