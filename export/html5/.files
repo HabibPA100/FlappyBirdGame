@@ -1,13 +1,14 @@
 export/html5/bin/assets/data/data-goes-here.txt
-export/html5/bin/assets/images/background.jpeg
-export/html5/bin/assets/images/bg.png
+export/html5/bin/assets/images/background.jpg
 export/html5/bin/assets/images/bird.png
+export/html5/bin/assets/images/bust.png
 export/html5/bin/assets/images/ground.png
 export/html5/bin/assets/images/images-go-here.txt
-export/html5/bin/assets/images/mypipe.png
 export/html5/bin/assets/images/pipe.png
 export/html5/bin/assets/images/topPipe.png
+export/html5/bin/assets/music/bgMusic.mp3
 export/html5/bin/assets/music/music-goes-here.txt
+export/html5/bin/assets/sounds/bust.wav
 export/html5/bin/assets/sounds/sounds-go-here.txt
 export/html5/bin/flixel/sounds/beep.mp3
 export/html5/bin/flixel/sounds/flixel.mp3
